@@ -1,3 +1,6 @@
+using Application.Activities;
+using Application.Core;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
@@ -20,6 +23,9 @@ builder.Services.AddCors(opt => {
         policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000");
     });
 });
+
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(List.Handler).Assembly));
+builder.Services.AddAutoMapper(typeof(MappingProfiles).Assembly);
 
 var app = builder.Build();
 
@@ -52,3 +58,7 @@ catch (Exception ex)
 }
 
 app.Run();
+
+// Api controller is sending the request via our go between mediator to our application project that's being handled there and then 
+// that returns the list of activities back up vis mediator to our API controller, which we then return inside of an Http response
+// to the client
